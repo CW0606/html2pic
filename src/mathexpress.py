@@ -8,7 +8,6 @@ import codecs
 import config
 
 
-
 def _findmath(rules, html):
     if rules is None or len(rules) == 0:
         return set()
@@ -49,9 +48,7 @@ def findmath(rules_path, html_path=None, html_content=None):
         raise Exception('html 不能为空')
     elif not isinstance(html, unicode):
         raise Exception('需要提供unicode编码的html')
-    math_html = html
-    return {html: _findmath(rules, math_html)}
-
+    return _findmath(rules, html)
 
 if __name__ == '__main__':
     args = sys.argv
