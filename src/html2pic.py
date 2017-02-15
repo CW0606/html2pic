@@ -7,7 +7,7 @@ from PIL import Image
 import os
 import time
 import codecs
-
+import sys
 
 def _generate_valid_html(math_express, css_path=None):
     """将匹配成功的代码添加标签"""
@@ -53,6 +53,7 @@ def _crop(div, span, screenshot_path):
 
 def _draw(driver, html):
     """传入的html代码进行截图"""
+    print(html[0:100])
     html_path = _save_valid_html(html)
     url = "file://" + html_path
     driver.get(url)
@@ -78,7 +79,23 @@ def html2pic(rules_path, html_path=None, html_content=None, driver=None):
     if driver is None:
         driver = webdriver.Chrome()
     match_htmls = findmath(rules_path, html_path, html_content)
+    print("match length:{length}".format(length=len(match_htmls)))
     html2pics = dict()
     for html in match_htmls:
+        print html[0:100]
         html2pics.update({html: _draw(driver, html)})
     return html2pics
+
+
+if __name__ == '__main__':
+    args = sys.argv
+    if len(args) != 3:
+       print("""
+       example: python html2pic rules_path html_path
+       """)
+    driver = webdriver.Chrome()
+    try:
+        print html2pic(rules_path = args[1], html_path=args[2], driver=driver)
+    except Exception as e:
+        print e
+    driver.close()

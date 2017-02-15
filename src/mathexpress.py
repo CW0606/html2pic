@@ -11,6 +11,7 @@ import config
 def _findmath(rules, html):
     if rules is None or len(rules) == 0:
         return set()
+    print("rules length:{length}".format(length = len(rules)))
     rule = rules[0]
     partern = re.compile(rule)
     groups = partern.findall(html)
@@ -29,12 +30,18 @@ def _parse_rules(rules_path):
             line = line.strip('\n\r\t')
             if not line.startswith(config.annotate):
                 rules.append(line)
+    print('=='*10+'rule'+'=='*10)
+    print(rules)
+    print('=='*10+'rule'+'=='*10)
     return rules
 
 
 def _get_html(html_path):
     with codecs.open(html_path, mode='rb', encoding='utf-8') as f:
         html = f.read()
+    print('=='*10+'html'+'=='*10)
+    print(html[0:100])
+    print('=='*10+'html'+'=='*10)
     return html
 
 
