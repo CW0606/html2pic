@@ -34,15 +34,17 @@ def _parse_rules(rules_path):
 
 
 def _get_html(html_path):
-    html = None
     with codecs.open(html_path, mode='rb', encoding='utf-8') as f:
         html = f.read()
     return html
 
 
-def findmath(rules_path, html_path):
+def findmath(rules_path, html_path=None, html_content=None):
     rules = _parse_rules(rules_path)
-    html = _get_html(html_path)
+    if html_content is None:
+        html = _get_html(html_path)
+    else:
+        html = html_content
     if html is None:
         raise Exception('html 不能为空')
     elif not isinstance(html, unicode):
