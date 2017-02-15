@@ -28,7 +28,8 @@ def _parse_rules(rules_path):
     with codecs.open(rules_path, mode='rb', encoding='utf-8') as f:
         for line in f.readlines():
             line = line.strip('\n\r\t')
-            if not line.startswith(config.annotate):
+            if not line.startswith(config.annotate) and len(line) >= 1\
+            and line != u'':
                 rules.append(line)
     print('=='*10+'rule'+'=='*10)
     print(rules)

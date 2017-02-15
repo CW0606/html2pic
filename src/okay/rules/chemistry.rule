@@ -1,0 +1,6 @@
+# 菁优完化学方程式
+# 分数
+(<span[\S\s]{0,20}class="MathJye"[\S\s]*?>[\S\s.]+?</span>)
+# 一般分子式
+((?:[a-zA-Z\d↑.•+-═]*(?:<sub>[\S\s]+?</sub>|<sup>[\S\s]+?</sup>|<SUB>[\S\s]+?</SUB>|<SUP>[\S\s]+?</SUP>)[a-zA-Z\d↑.•+-═]*?)+)
+

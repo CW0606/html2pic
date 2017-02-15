@@ -11,7 +11,7 @@ annotate = '#'
 
 
 # 占位符
-placeholder = u'#######'
+placeholder = u'回家吃饭了'
 
 
 # html 暂存路径

@@ -1,0 +1,4 @@
+# 菁优网数学公式
+((?:[→a-zA-Z\d+-]*<span[\S\s]{0,20}class="MathJye"[\S\s]*?>[\S\s.]+?</span>[a-zA-Z\d+-]*)+)
+((?:（[a-zA-Z\d+-]+?）)+(?:<sub>[\S\s]+?</sub>|<sup>[\S\s]+?</sup>|<SUB>[\S\s]+?</SUB>|<SUP>[\S\s]+?</SUP>)+)
+((?:[a-zA-Z\d+-]*(?:<sub>[\S\s]+?</sub>|<sup>[\S\s]+?</sup>|<SUB>[\S\s]+?</SUB>|<SUP>[\S\s]+?</SUP>)[a-zA-Z\d+-]*?)+)
