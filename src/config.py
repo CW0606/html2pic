@@ -25,3 +25,14 @@ png_path = os.path.join(current_dir_path, 'pngs')
 
 # screenshot 临时存储路径
 screenshot_path = os.path.join(current_dir_path, 'screenshot')
+
+# mysql_config
+mysql_config = {
+    "host": "172.18.4.81",
+    "user": "admintest",
+    "passwd": "dsjw2015",
+    "db": "homework",
+    "port": 3307,
+    "charset": "utf8"
+}
+

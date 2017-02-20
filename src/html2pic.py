@@ -7,7 +7,7 @@ from PIL import Image
 import os
 import time
 import codecs
-import sys
+import hashlib
 
 
 def _generate_valid_html(math_express, css_path=None):
@@ -36,24 +36,35 @@ def _delete_file(file_path):
         pass
 
 
-def _crop(div, span, screenshot_path):
+def _crop(div, span, screenshot_path, png_name):
     """截图 这儿通过传入一个span获得需要截取部分的长度,传入一个div获得
     对象的高度来保证在截图时不会截取过长同时又不会纵向截取缺失"""
     img = Image.open(screenshot_path)
-    left = int(div.location ['x'])
-    top = int(div.location ['y'])
-    right = left + span.size ['width']
-    bottom = top + div.size ['height']
+    left = int(div.location['x'])
+    top = int(div.location['y'])
+    right = left + span.size['width']
+    bottom = top + div.size['height']
     window = (left, top, right, bottom)
     region = img.crop(window)
-    png_name = str(long(time.time() * 10000)) + '.png'
     png_path = os.path.join(config.png_path, png_name)
     region.save(png_path)
     return png_path
 
 
+def _exists_png(png_name):
+    """在配置目录下是否已存在对应图片"""
+    if png_name in set(os.listdir(config.png_path)):
+        return True
+    else:
+        return False
+
+
 def _draw(driver, html):
     """传入的html代码进行截图"""
+    png_name = u"%s.png" % hashlib.md5(html.encode('utf-8')).hexdigest()
+    if _exists_png(png_name):
+        print("=="*10 + "exists: " + png_name + "=="*10)
+        return png_name
     html_path = _save_valid_html(html)
     url = "file://" + html_path
     driver.get(url)
@@ -62,7 +73,7 @@ def _draw(driver, html):
     screenshot_name = str(long(time.time() * 10000)) + '.png'
     screenshot_path = os.path.join(config.screenshot_path, screenshot_name)
     driver.save_screenshot(screenshot_path)
-    png_path = _crop(div=div, span=span, screenshot_path=screenshot_path)
+    png_path = _crop(div=div, span=span, screenshot_path=screenshot_path, png_name=png_name)
     # 删除生成的临时文件
     _delete_file(html_path)
     _delete_file(screenshot_path)
@@ -85,41 +96,37 @@ def html2pic(rules_path, html_path=None, html_content=None, driver=None):
     if driver is None:
         driver = webdriver.Chrome()
     match_htmls = findmath(rules_path, html_path, html_content)
-    print("match length:{length}".format(length=len(match_htmls)))
     html2pics = dict()
     for html in match_htmls:
-        print html[0:100]
-        # html = _replace_start(html, u'/>')
-        # html = _replace_start(html, u'A.')
-        # html = _replace_start(html, u'B.')
-        # html = _replace_start(html, u'C.')
-        # html = _replace_start(html, u'D.')
-        # html = _replace_start(html, u'nbsp;')
         html2pics.update({html: _draw(driver, html)})
     return html2pics
 
 
 def test_from_db():
     import MySQLdb
-    db = MySQLdb.connect(host='172.18.4.81', user='admintest', passwd='dsjw2015',
-                         db='homework', port=3307, charset='utf8')
+    db = MySQLdb.connect(**config.mysql_config)
     cursor = db.cursor()
     cursor.execute(
         """select option_a,option_b,option_c,option_d,title,parse,answer1,
-        answer2 from questions where subjectId=9 limit 0, 10""")
+        answer2 from questions where subjectId=9 limit 20000""")
     data_list = cursor.fetchall()
-    driver = webdriver.Chrome()
+    driver = webdriver.PhantomJS()
     results = list()
+    start = time.time()
     for data in data_list:
         for item in data:
             if item is None or len(item) == 0:
                 pass
             else:
-                print(item)
-                result = html2pic("/Users/lovechenao/gitroom/html2pic/"
+                try:
+                    result = html2pic("/Users/lovechenao/gitroom/html2pic/"
                                   "src/okay/rules/chemistry.rule",
-                                  html_content=item,driver=driver)
-                results.append(result)
+                                      html_content=item, driver=driver)
+                    results.append(result)
+                except Exception as e:
+                    print e
+    print len(results)
+    print time.time() - start
     driver.close()
 
 
