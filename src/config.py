@@ -3,7 +3,8 @@ import os
 
 
 # 文件当前路径
-current_dir_path = "/Users/lovechenao/gitroom/html2pic/src/okay"
+#current_dir_path = "/Users/lovechenao/gitroom/html2pic/src/okay"
+current_dir_path = "/Users/lovechenao/gitroom/html2pic/src"
 # current_dir_path = os.getcwd()
 
 

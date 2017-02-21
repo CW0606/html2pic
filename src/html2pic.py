@@ -63,7 +63,7 @@ def _draw(driver, html):
     """传入的html代码进行截图"""
     png_name = u"%s.png" % hashlib.md5(html.encode('utf-8')).hexdigest()
     if _exists_png(png_name):
-        print("=="*10 + "exists: " + png_name + "=="*10)
+        # print("=="*10 + "exists: " + png_name + "=="*10)
         return png_name
     html_path = _save_valid_html(html)
     url = "file://" + html_path
@@ -98,9 +98,24 @@ def html2pic(rules_path, html_path=None, html_content=None, driver=None):
     match_htmls = findmath(rules_path, html_path, html_content)
     html2pics = dict()
     for html in match_htmls:
+        cdriver = None
+        if check_contain_chinese(html):
+            if driver is None or not isinstance(driver, webdriver.Chrome):
+                cdriver = webdriver.Chrome()
+                driver = cdriver
+        else:
+            continue
         html2pics.update({html: _draw(driver, html)})
+        if cdriver is not None:
+            cdriver.close()
     return html2pics
 
+def check_contain_chinese(check_str):
+    for ch in check_str:
+        if u'\u4e00' <= ch <= u'\u9fff':
+            print check_str
+            return True
+    return False
 
 def test_from_db():
     import MySQLdb
@@ -108,12 +123,17 @@ def test_from_db():
     cursor = db.cursor()
     cursor.execute(
         """select option_a,option_b,option_c,option_d,title,parse,answer1,
-        answer2 from questions where subjectId=9 limit 20000""")
+        answer2 from questions where subjectId=9""")
     data_list = cursor.fetchall()
     driver = webdriver.PhantomJS()
+    driver = webdriver.Chrome()
     results = list()
     start = time.time()
+    count = 0
     for data in data_list:
+        count += 1
+        if count % 101:
+           print count
         for item in data:
             if item is None or len(item) == 0:
                 pass
@@ -128,8 +148,6 @@ def test_from_db():
     print len(results)
     print time.time() - start
     driver.close()
-
-
 
 
 if __name__ == '__main__':
